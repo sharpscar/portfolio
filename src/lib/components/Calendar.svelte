@@ -347,6 +347,10 @@
 		border-radius: 12px;
 		padding: 2rem;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		width: 100%;
+		max-width: 100%;
+		overflow-x: auto;
+		box-sizing: border-box;
 	}
 
 	.calendar-header {
@@ -386,6 +390,9 @@
 		grid-template-columns: repeat(7, 1fr);
 		gap: 1px;
 		margin-bottom: 1rem;
+		width: 100%;
+		min-width: 280px;
+		box-sizing: border-box;
 	}
 
 	.weekday-header {
@@ -402,6 +409,9 @@
 		gap: 1px;
 		background: #e1e5e9;
 		border: 1px solid #e1e5e9;
+		width: 100%;
+		min-width: 280px;
+		box-sizing: border-box;
 	}
 
 	.calendar-day {
@@ -604,52 +614,195 @@
 
 	/* 반응형 */
 	@media (max-width: 768px) {
-		.container {
-			max-width: 100%;
-			padding: 0 1rem;
+		.calendar-section {
+			padding: 3rem 1rem;
 		}
 
-		.calendar,
-		.calendar-weekdays,
-		.calendar-grid,
-		.calendar-day {
-			box-sizing: border-box;
+		.container {
+			max-width: 100%;
+			padding: 0;
 		}
 
 		.calendar {
-			padding: 0.5rem;
+			padding: 1rem;
+			margin: 0;
+			border-radius: 8px;
 		}
 
-		.calendar-weekdays,
+		.calendar-header {
+			margin-bottom: 1rem;
+		}
+
+		.month-year {
+			font-size: 1.2rem;
+		}
+
+		.nav-btn {
+			width: 35px;
+			height: 35px;
+		}
+
+		/* 요일 헤더 모바일 최적화 */
+		.calendar-weekdays {
+			grid-template-columns: repeat(7, 1fr);
+			gap: 1px;
+			margin-bottom: 1px;
+		}
+
+		.weekday-header {
+			padding: 0.5rem 0.25rem;
+			font-size: 0.8rem;
+			font-weight: 600;
+			text-align: center;
+			min-height: auto;
+		}
+
+		/* 달력 그리드 모바일 최적화 */
 		.calendar-grid {
-			gap: 0;
-			grid-template-columns: repeat(7, minmax(0, 1fr));
-		}
-
-		.weekday-header,
-		.calendar-day {
-			min-width: 0;
+			grid-template-columns: repeat(7, 1fr);
+			gap: 1px;
+			width: 100%;
 		}
 
 		.calendar-day {
-			min-height: 70px;
+			min-height: 60px;
+			max-height: 80px;
 			padding: 0.25rem;
+			font-size: 0.85rem;
+			border: 1px solid transparent;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
 		}
 
-		.modal-content {
-			margin: 1rem;
+		.calendar-day.has-image {
+			border: 1px solid var(--color-theme-1);
+			box-shadow: 0 1px 3px rgba(99, 102, 241, 0.2);
+		}
+
+		.day-number {
+			font-size: 0.8rem;
+			margin-bottom: 0.15rem;
+			line-height: 1;
+		}
+
+		.image-indicator {
+			flex: 1;
+			margin-top: 0.1rem;
+			border-radius: 3px;
+			min-height: 30px;
+			max-height: 40px;
 		}
 
 		.image-indicator img {
-			box-sizing: border-box;
+			height: 100%;
+			max-height: 40px;
+			border-radius: 2px;
+		}
+
+		.empty-indicator {
+			flex: 1;
+			margin-top: 0.1rem;
+			min-height: 30px;
+		}
+
+		.empty-indicator svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		/* 모달 모바일 최적화 */
+		.modal-content {
+			margin: 0.5rem;
+			max-width: calc(100vw - 1rem);
+			max-height: calc(100vh - 1rem);
+		}
+
+		.modal-header {
+			padding: 1rem;
+		}
+
+		.modal-header h3 {
+			font-size: 1.1rem;
+		}
+
+		.modal-body {
+			padding: 1rem;
+		}
+
+		.image-preview img {
+			max-height: 250px;
 		}
 
 		.upload-controls {
 			flex-direction: column;
+			gap: 0.75rem;
+		}
+
+		.upload-btn,
+		.save-btn,
+		.delete-btn {
+			width: 100%;
+			padding: 0.75rem;
+			font-size: 0.9rem;
 		}
 
 		h2 {
 			font-size: 2rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.section-description {
+			font-size: 1rem;
+			margin-bottom: 2rem;
+		}
+	}
+
+	/* 더 작은 화면 (320px 이하) */
+	@media (max-width: 375px) {
+		.calendar-section {
+			padding: 2rem 0.5rem;
+		}
+
+		.calendar {
+			padding: 0.75rem;
+		}
+
+		.calendar-day {
+			min-height: 50px;
+			max-height: 65px;
+			padding: 0.2rem;
+		}
+
+		.day-number {
+			font-size: 0.75rem;
+		}
+
+		.image-indicator {
+			min-height: 25px;
+			max-height: 30px;
+		}
+
+		.image-indicator img {
+			max-height: 30px;
+		}
+
+		.weekday-header {
+			font-size: 0.7rem;
+			padding: 0.4rem 0.1rem;
+		}
+
+		.month-year {
+			font-size: 1.1rem;
+		}
+
+		.nav-btn {
+			width: 30px;
+			height: 30px;
+		}
+
+		h2 {
+			font-size: 1.7rem;
 		}
 	}
 </style>
