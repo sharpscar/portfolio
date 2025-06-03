@@ -2,9 +2,9 @@
 	const projects = [
 		{
 			id: 1,
-			title: "3D Game Engine",
-			description: "Custom 3D game engine with OpenGL rendering, physics simulation, and entity-component system.",
-			technologies: ["C++", "OpenGL", "GLFW", "GLM"],
+			title: "용사 용복이의 모험",
+			description: "터미널에서 동작하는 간단한 게임",
+			technologies: ["C", "구조체", "도트애니메이션"],
 			github: "https://github.com/username/3d-engine",
 			image: "https://res.cloudinary.com/dxwuthcy0/image/upload/v1748993464/344244DC-E19B-4270-9FB8-F003AA29F1CC_an2wms.png",
 			video: "/projects/game-engine-demo.mp4",
