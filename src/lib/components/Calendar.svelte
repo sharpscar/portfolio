@@ -8,10 +8,14 @@
 	let imagePreview = null;
 	let uploadedFile = null;
 
+	// Cloudinary 설정 (여기에 본인의 Cloud Name과 Upload Preset Name을 넣어주세요)
+	const CLOUDINARY_CLOUD_NAME = 'dxwuthcy0'; 
+	const CLOUDINARY_UPLOAD_PRESET = 'scar_image';
+
 	// 달력 데이터 변경 시 반응형으로 업데이트
 	$: calendarDataReactive = calendarData;
 
-	// 달력 데이터를 로컬스토리지에서 불러오기
+	// 달력 데이터를 로컬스토리지에서 불러오기 (초기 로드 시에만 사용)
 	onMount(() => {
 		const saved = localStorage.getItem('calendar-data');
 		if (saved) {
@@ -19,7 +23,7 @@
 		}
 	});
 
-	// 달력 데이터 저장
+	// 달력 데이터 저장 (이제 Cloudinary URL을 저장)
 	function saveCalendarData() {
 		localStorage.setItem('calendar-data', JSON.stringify(calendarData));
 	}
@@ -83,67 +87,60 @@
 		}
 
 		uploadedFile = file;
-		resizeAndPreviewImage(file);
-	}
-
-	// 이미지 리사이즈 및 프리뷰
-	function resizeAndPreviewImage(file) {
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
-		const img = new Image();
-
-		img.onload = function() {
-			// 달력 썸네일용 최적 크기 (400px)
-			const maxSize = 400;
-			let { width, height } = img;
-
-			// 비율을 유지하면서 리사이즈
-			if (width > height) {
-				if (width > maxSize) {
-					height = (height * maxSize) / width;
-					width = maxSize;
-				}
-			} else {
-				if (height > maxSize) {
-					width = (width * maxSize) / height;
-					height = maxSize;
-				}
-			}
-
-			canvas.width = width;
-			canvas.height = height;
-
-			// 이미지 그리기
-			ctx.drawImage(img, 0, 0, width, height);
-
-			// Base64로 변환 (품질 0.7로 최적 압축)
-			const resizedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-			imagePreview = resizedDataUrl;
-		};
-
-		// 파일을 이미지로 로드
+		
+		// 미리보기 생성을 위해 FileReader 사용
 		const reader = new FileReader();
 		reader.onload = (e) => {
-			img.src = e.target.result;
+			imagePreview = e.target.result; // Base64 데이터를 미리보기로 사용
 		};
 		reader.readAsDataURL(file);
 	}
 
-	// 이미지 저장
-	function saveImage() {
-		if (!imagePreview || !selectedDate) return;
+	// 이미지 리사이즈 및 프리뷰 (Cloudinary가 처리하므로 로컬 리사이징은 제거)
+	// 이 함수는 더 이상 Cloudinary 업로드에 사용되지 않지만,
+	// 로컬 미리보기 용도로는 유지할 수 있습니다.
+	// 현재는 Base64 미리보기만 사용하므로 이 함수는 제거합니다.
 
-		const dateKey = `${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`;
-		calendarData[dateKey] = {
-			image: imagePreview,
-			uploadDate: new Date().toISOString()
-		};
+	// 이미지 저장 (Cloudinary에 업로드)
+	async function saveImage() {
+		if (!uploadedFile || !selectedDate) return;
 
-		// 반응형 업데이트를 위해 새 객체 생성
-		calendarData = { ...calendarData };
-		
-		saveCalendarData();
-		closeModal();
+		const formData = new FormData();
+		formData.append('file', uploadedFile);
+		formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+		try {
+			const response = await fetch(
+				`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+				{
+					method: 'POST',
+					body: formData
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error('Cloudinary 업로드 실패');
+			}
+
+			const data = await response.json();
+			const imageUrl = data.secure_url; // Cloudinary에서 반환된 안전한 URL
+
+			const dateKey = `${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`;
+			calendarData[dateKey] = {
+				image: imageUrl, // Base64 대신 Cloudinary URL 저장
+				uploadDate: new Date().toISOString()
+			};
+
+			// 반응형 업데이트를 위해 새 객체 생성
+			calendarData = { ...calendarData };
+			
+			saveCalendarData();
+			closeModal();
+			alert('이미지가 성공적으로 업로드되었습니다!');
+		} catch (error) {
+			console.error('이미지 업로드 중 오류 발생:', error);
+			alert('이미지 업로드에 실패했습니다. 콘솔을 확인해주세요.');
+		}
 	}
 
 	// 이미지 삭제
@@ -183,6 +180,7 @@
 	function getImage(day) {
 		if (!day) return null;
 		const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`;
+		// 이제 Base64 대신 Cloudinary URL을 직접 반환
 		return calendarData[dateKey]?.image;
 	}
 
