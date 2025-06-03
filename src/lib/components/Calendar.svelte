@@ -414,6 +414,7 @@
 		display: flex;
 		flex-direction: column;
 		border: 2px solid transparent;
+		min-width: 0;
 	}
 
 	.calendar-day.active:hover {
@@ -602,16 +603,39 @@
 
 	/* 반응형 */
 	@media (max-width: 768px) {
+		.calendar,
+		.calendar-weekdays,
+		.calendar-grid,
+		.calendar-day {
+			box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 함 */
+		}
+
 		.calendar {
-			padding: 1rem;
+			padding: 0.5rem; /* 모바일에서 여백을 약간 줄여서 공간 확보 */
+		}
+
+		.calendar-weekdays,
+		.calendar-grid {
+			gap: 0; /* 모바일에서 그리드 간격 제거 */
+		}
+
+		.weekday-header,
+		.calendar-day {
+			width: calc(100% / 7); /* 각 셀의 너비를 정확히 7등분 */
+			/* flex-basis: calc(100% / 7); flexbox 사용 시 */
 		}
 
 		.calendar-day {
-			min-height: 80px;
+			min-height: 70px; /* 모바일에서 높이를 약간 줄여서 더 잘 맞도록 함 */
+			padding: 0.25rem; /* Further reduce padding on mobile */
 		}
 
 		.modal-content {
 			margin: 1rem;
+		}
+
+		.image-indicator img {
+			box-sizing: border-box; /* Ensure image fits within its container */
 		}
 
 		.upload-controls {
