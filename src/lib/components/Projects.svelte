@@ -6,7 +6,7 @@
 			description: "Custom 3D game engine with OpenGL rendering, physics simulation, and entity-component system.",
 			technologies: ["C++", "OpenGL", "GLFW", "GLM"],
 			github: "https://github.com/username/3d-engine",
-			image: "/projects/game-engine.jpg",
+			image: "https://res.cloudinary.com/dxwuthcy0/image/upload/v1748993464/344244DC-E19B-4270-9FB8-F003AA29F1CC_an2wms.png",
 			video: "/projects/game-engine-demo.mp4",
 			hasVideo: true
 		},
