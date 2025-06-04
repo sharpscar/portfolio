@@ -81,8 +81,16 @@
 		const file = event.target.files[0];
 		if (!file) return;
 
+		// 파일 타입 검증
 		if (!file.type.startsWith('image/')) {
 			alert('이미지 파일만 업로드 가능합니다.');
+			return;
+		}
+
+		// 파일 크기 검증 (10MB 제한)
+		const maxSize = 10 * 1024 * 1024; // 10MB
+		if (file.size > maxSize) {
+			alert('파일 크기는 10MB 이하여야 합니다.');
 			return;
 		}
 
@@ -94,6 +102,12 @@
 			imagePreview = e.target.result; // Base64 데이터를 미리보기로 사용
 		};
 		reader.readAsDataURL(file);
+
+		console.log('파일 선택됨:', {
+			name: file.name,
+			size: `${(file.size / 1024 / 1024).toFixed(2)}MB`,
+			type: file.type
+		});
 	}
 
 	// 이미지 리사이즈 및 프리뷰 (Cloudinary가 처리하므로 로컬 리사이징은 제거)
@@ -105,9 +119,17 @@
 	async function saveImage() {
 		if (!uploadedFile || !selectedDate) return;
 
+		// 업로드 중 표시
+		const originalText = document.querySelector('.save-btn').textContent;
+		document.querySelector('.save-btn').textContent = '업로드 중...';
+		document.querySelector('.save-btn').disabled = true;
+
 		const formData = new FormData();
 		formData.append('file', uploadedFile);
 		formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+		
+		// 이미지 최적화 파라미터 추가
+		formData.append('transformation', 'c_limit,w_800,h_600,q_auto,f_auto');
 
 		try {
 			const response = await fetch(
@@ -119,16 +141,22 @@
 			);
 
 			if (!response.ok) {
-				throw new Error('Cloudinary 업로드 실패');
+				const errorData = await response.text();
+				console.error('Cloudinary 응답 오류:', errorData);
+				throw new Error(`Cloudinary 업로드 실패: ${response.status}`);
 			}
 
 			const data = await response.json();
+			console.log('Cloudinary 업로드 성공:', data);
+			
 			const imageUrl = data.secure_url; // Cloudinary에서 반환된 안전한 URL
 
 			const dateKey = `${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`;
 			calendarData[dateKey] = {
-				image: imageUrl, // Base64 대신 Cloudinary URL 저장
-				uploadDate: new Date().toISOString()
+				image: imageUrl, // Cloudinary URL 저장
+				cloudinaryId: data.public_id, // 삭제용 ID 저장
+				uploadDate: new Date().toISOString(),
+				originalName: uploadedFile.name
 			};
 
 			// 반응형 업데이트를 위해 새 객체 생성
@@ -137,9 +165,17 @@
 			saveCalendarData();
 			closeModal();
 			alert('이미지가 성공적으로 업로드되었습니다!');
+			
 		} catch (error) {
 			console.error('이미지 업로드 중 오류 발생:', error);
-			alert('이미지 업로드에 실패했습니다. 콘솔을 확인해주세요.');
+			alert(`이미지 업로드에 실패했습니다: ${error.message}`);
+		} finally {
+			// 버튼 상태 복원
+			const saveBtn = document.querySelector('.save-btn');
+			if (saveBtn) {
+				saveBtn.textContent = originalText;
+				saveBtn.disabled = false;
+			}
 		}
 	}
 
@@ -176,11 +212,29 @@
 		return hasImg;
 	}
 
-	// 저장된 이미지 가져오기
+	// 저장된 이미지 가져오기 (썸네일용 최적화)
 	function getImage(day) {
 		if (!day) return null;
 		const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`;
-		// 이제 Base64 대신 Cloudinary URL을 직접 반환
+		const imageUrl = calendarData[dateKey]?.image;
+		
+		if (!imageUrl) return null;
+		
+		// Cloudinary URL인 경우 썸네일 최적화 파라미터 추가
+		if (imageUrl.includes('cloudinary.com')) {
+			// 기존 transformation이 있으면 교체, 없으면 추가
+			const baseUrl = imageUrl.split('/upload/')[0] + '/upload/';
+			const imagePath = imageUrl.split('/upload/')[1];
+			return `${baseUrl}c_thumb,w_100,h_100,g_face,q_auto,f_auto/${imagePath}`;
+		}
+		
+		return imageUrl;
+	}
+
+	// 원본 이미지 가져오기 (모달용)
+	function getOriginalImage(day) {
+		if (!day) return null;
+		const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`;
 		return calendarData[dateKey]?.image;
 	}
 
@@ -278,9 +332,9 @@
 					<div class="image-preview">
 						<img src={imagePreview} alt="Preview" />
 					</div>
-				{:else if getImage(selectedDate.getDate())}
+				{:else if getOriginalImage(selectedDate.getDate())}
 					<div class="image-preview">
-						<img src={getImage(selectedDate.getDate())} alt="Saved" />
+						<img src={getOriginalImage(selectedDate.getDate())} alt="Saved" />
 					</div>
 				{:else}
 					<div class="upload-placeholder">
@@ -303,10 +357,13 @@
 						이미지 선택
 					</label>
 
-					{#if imagePreview || getImage(selectedDate.getDate())}
+					{#if imagePreview}
 						<button class="save-btn" on:click={saveImage}>
 							저장
 						</button>
+					{/if}
+					
+					{#if getOriginalImage(selectedDate.getDate())}
 						<button class="delete-btn" on:click={deleteImage}>
 							삭제
 						</button>
