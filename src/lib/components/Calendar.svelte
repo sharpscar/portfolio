@@ -15,17 +15,73 @@
 	// 달력 데이터 변경 시 반응형으로 업데이트
 	$: calendarDataReactive = calendarData;
 
-	// 달력 데이터를 로컬스토리지에서 불러오기 (초기 로드 시에만 사용)
-	onMount(() => {
-		const saved = localStorage.getItem('calendar-data');
-		if (saved) {
-			calendarData = JSON.parse(saved);
-		}
+	// 서버에서 달력 데이터 불러오기
+	onMount(async () => {
+		await loadCalendarData();
 	});
 
-	// 달력 데이터 저장 (이제 Cloudinary URL을 저장)
-	function saveCalendarData() {
-		localStorage.setItem('calendar-data', JSON.stringify(calendarData));
+	// 서버에서 달력 데이터 로드
+	async function loadCalendarData() {
+		try {
+			const response = await fetch('/api/calendar');
+			if (response.ok) {
+				const result = await response.json();
+				calendarData = result.calendarData || {};
+			} else {
+				console.error('달력 데이터 로드 실패:', response.status);
+			}
+		} catch (error) {
+			console.error('달력 데이터 로드 오류:', error);
+		}
+	}
+
+	// 서버에 달력 데이터 저장
+	async function saveCalendarData(dateKey, imageData) {
+		try {
+			const response = await fetch('/api/calendar', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					dateKey,
+					imageUrl: imageData.image,
+					cloudinaryId: imageData.cloudinaryId,
+					originalName: imageData.originalName
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error(`서버 저장 실패: ${response.status}`);
+			}
+
+			return await response.json();
+		} catch (error) {
+			console.error('달력 데이터 저장 오류:', error);
+			throw error;
+		}
+	}
+
+	// 서버에서 달력 데이터 삭제
+	async function deleteCalendarData(dateKey) {
+		try {
+			const response = await fetch('/api/calendar', {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ dateKey })
+			});
+
+			if (!response.ok) {
+				throw new Error(`서버 삭제 실패: ${response.status}`);
+			}
+
+			return await response.json();
+		} catch (error) {
+			console.error('달력 데이터 삭제 오류:', error);
+			throw error;
+		}
 	}
 
 	// 현재 월의 첫 번째 날
@@ -128,39 +184,53 @@
 		formData.append('file', uploadedFile);
 		formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 		
-		// 폴더 지정 (선택사항)
-		formData.append('folder', 'calendar');
+		// 폴더 지정 제거 (문제 원인일 수 있음)
+		// formData.append('folder', 'calendar');
 		
 		// 이미지 최적화 파라미터 제거 (우선 기본 업로드만 시도)
 		// formData.append('transformation', 'c_limit,w_800,h_600,q_auto,f_auto');
 
 		try {
-			console.log('Cloudinary 업로드 시작:', {
-				cloudName: CLOUDINARY_CLOUD_NAME,
-				uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-				fileSize: uploadedFile.size,
-				fileType: uploadedFile.type
+			console.log('=== Cloudinary 업로드 디버깅 ===');
+			console.log('Cloud Name:', CLOUDINARY_CLOUD_NAME);
+			console.log('Upload Preset:', CLOUDINARY_UPLOAD_PRESET);
+			console.log('파일 정보:', {
+				name: uploadedFile.name,
+				size: uploadedFile.size,
+				type: uploadedFile.type,
+				lastModified: uploadedFile.lastModified
+			});
+			
+			// FormData 내용 확인
+			console.log('FormData 내용:');
+			for (let pair of formData.entries()) {
+				console.log(pair[0] + ':', pair[1]);
+			}
+
+			const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+			console.log('업로드 URL:', uploadUrl);
+
+			const response = await fetch(uploadUrl, {
+				method: 'POST',
+				body: formData
 			});
 
-			const response = await fetch(
-				`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-				{
-					method: 'POST',
-					body: formData
-				}
-			);
-
-			console.log('Cloudinary 응답 상태:', response.status);
+			console.log('응답 상태:', response.status);
+			console.log('응답 헤더:', [...response.headers.entries()]);
 
 			if (!response.ok) {
 				const errorData = await response.text();
-				console.error('Cloudinary 응답 오류:', errorData);
+				console.error('=== 오류 응답 ===');
+				console.error('상태 코드:', response.status);
+				console.error('응답 텍스트:', errorData);
 				
-				// 400 오류 시 상세 정보 표시
-				if (response.status === 400) {
-					alert(`업로드 실패 (400): Upload Preset '${CLOUDINARY_UPLOAD_PRESET}'이 Unsigned 모드인지 확인해주세요.\n\n오류 내용: ${errorData}`);
-				} else {
-					alert(`업로드 실패 (${response.status}): ${errorData}`);
+				// JSON 파싱 시도
+				try {
+					const errorJson = JSON.parse(errorData);
+					console.error('오류 JSON:', errorJson);
+					alert(`업로드 실패 (${response.status}):\n${errorJson.error?.message || errorData}`);
+				} catch {
+					alert(`업로드 실패 (${response.status}):\n${errorData}`);
 				}
 				
 				throw new Error(`Cloudinary 업로드 실패: ${response.status}`);
@@ -170,19 +240,24 @@
 			console.log('Cloudinary 업로드 성공:', data);
 			
 			const imageUrl = data.secure_url; // Cloudinary에서 반환된 안전한 URL
-
 			const dateKey = `${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`;
-			calendarData[dateKey] = {
-				image: imageUrl, // Cloudinary URL 저장
-				cloudinaryId: data.public_id, // 삭제용 ID 저장
-				uploadDate: new Date().toISOString(),
+			
+			const imageData = {
+				image: imageUrl,
+				cloudinaryId: data.public_id,
 				originalName: uploadedFile.name
 			};
 
-			// 반응형 업데이트를 위해 새 객체 생성
+			// 서버에 저장
+			await saveCalendarData(dateKey, imageData);
+
+			// 로컬 데이터 업데이트
+			calendarData[dateKey] = {
+				...imageData,
+				uploadDate: new Date().toISOString()
+			};
 			calendarData = { ...calendarData };
 			
-			saveCalendarData();
 			closeModal();
 			alert('이미지가 성공적으로 업로드되었습니다!');
 			
@@ -200,17 +275,24 @@
 	}
 
 	// 이미지 삭제
-	function deleteImage() {
+	async function deleteImage() {
 		if (!selectedDate) return;
 
-		const dateKey = `${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`;
-		delete calendarData[dateKey];
-		
-		// 반응형 업데이트를 위해 새 객체 생성
-		calendarData = { ...calendarData };
-		
-		saveCalendarData();
-		closeModal();
+		try {
+			const dateKey = `${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`;
+			
+			// 서버에서 삭제
+			await deleteCalendarData(dateKey);
+			
+			// 로컬 데이터에서 삭제
+			delete calendarData[dateKey];
+			calendarData = { ...calendarData };
+			
+			closeModal();
+			alert('이미지가 삭제되었습니다.');
+		} catch (error) {
+			alert(`이미지 삭제에 실패했습니다: ${error.message}`);
+		}
 	}
 
 	// 모달 닫기
