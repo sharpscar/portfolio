@@ -249,7 +249,9 @@
 			};
 
 			// 서버에 저장
-			await saveCalendarData(dateKey, imageData);
+			console.log('서버에 저장 시도:', dateKey, imageData);
+			const saveResult = await saveCalendarData(dateKey, imageData);
+			console.log('서버 저장 결과:', saveResult);
 
 			// 로컬 데이터 업데이트
 			calendarData[dateKey] = {

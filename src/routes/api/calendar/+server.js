@@ -40,12 +40,18 @@ export async function GET() {
 // POST - 새 이미지 저장
 export async function POST({ request }) {
 	try {
-		const { dateKey, imageUrl, cloudinaryId, originalName } = await request.json();
+		console.log('=== API POST 요청 받음 ===');
+		const requestData = await request.json();
+		console.log('요청 데이터:', requestData);
+		
+		const { dateKey, imageUrl, cloudinaryId, originalName } = requestData;
 
 		if (!dateKey || !imageUrl) {
+			console.log('필수 데이터 누락:', { dateKey, imageUrl });
 			return json({ error: 'dateKey and imageUrl are required' }, { status: 400 });
 		}
 
+		console.log('Supabase에 저장 시도...');
 		// 기존 데이터가 있으면 업데이트, 없으면 삽입
 		const { data, error } = await supabase
 			.from('calendar_images')
@@ -64,6 +70,7 @@ export async function POST({ request }) {
 			return json({ error: error.message }, { status: 400 });
 		}
 
+		console.log('Supabase 저장 성공:', data);
 		return json({ success: true, data: data[0] });
 	} catch (error) {
 		console.error('API 오류:', error);
