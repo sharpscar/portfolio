@@ -10,7 +10,7 @@
 
 	// Cloudinary 설정 (여기에 본인의 Cloud Name과 Upload Preset Name을 넣어주세요)
 	const CLOUDINARY_CLOUD_NAME = 'dxwuthcy0'; 
-	const CLOUDINARY_UPLOAD_PRESET = 'scar_image';
+	const CLOUDINARY_UPLOAD_PRESET = 'portfolio_calendar';
 
 	// 달력 데이터 변경 시 반응형으로 업데이트
 	$: calendarDataReactive = calendarData;
@@ -128,10 +128,20 @@
 		formData.append('file', uploadedFile);
 		formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 		
-		// 이미지 최적화 파라미터 추가
-		formData.append('transformation', 'c_limit,w_800,h_600,q_auto,f_auto');
+		// 폴더 지정 (선택사항)
+		formData.append('folder', 'calendar');
+		
+		// 이미지 최적화 파라미터 제거 (우선 기본 업로드만 시도)
+		// formData.append('transformation', 'c_limit,w_800,h_600,q_auto,f_auto');
 
 		try {
+			console.log('Cloudinary 업로드 시작:', {
+				cloudName: CLOUDINARY_CLOUD_NAME,
+				uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+				fileSize: uploadedFile.size,
+				fileType: uploadedFile.type
+			});
+
 			const response = await fetch(
 				`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
 				{
@@ -140,9 +150,19 @@
 				}
 			);
 
+			console.log('Cloudinary 응답 상태:', response.status);
+
 			if (!response.ok) {
 				const errorData = await response.text();
 				console.error('Cloudinary 응답 오류:', errorData);
+				
+				// 400 오류 시 상세 정보 표시
+				if (response.status === 400) {
+					alert(`업로드 실패 (400): Upload Preset '${CLOUDINARY_UPLOAD_PRESET}'이 Unsigned 모드인지 확인해주세요.\n\n오류 내용: ${errorData}`);
+				} else {
+					alert(`업로드 실패 (${response.status}): ${errorData}`);
+				}
+				
 				throw new Error(`Cloudinary 업로드 실패: ${response.status}`);
 			}
 
