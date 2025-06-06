@@ -52,22 +52,26 @@ export async function POST({ request }) {
 		}
 
 		console.log('Supabase에 저장 시도...');
-		// 기존 데이터가 있으면 업데이트, 없으면 삽입
+		// 일단 간단한 insert 시도 (upsert 문제일 수 있음)
 		const { data, error } = await supabase
 			.from('calendar_images')
-			.upsert({
+			.insert({
 				date_key: dateKey,
 				image_url: imageUrl,
 				cloudinary_id: cloudinaryId,
 				original_name: originalName
-			}, {
-				onConflict: 'date_key'
 			})
 			.select();
 
 		if (error) {
 			console.error('Supabase 저장 오류:', error);
-			return json({ error: error.message }, { status: 400 });
+			console.error('상세 오류 정보:', error.details, error.hint, error.code);
+			return json({ 
+				error: error.message,
+				details: error.details,
+				hint: error.hint,
+				code: error.code
+			}, { status: 400 });
 		}
 
 		console.log('Supabase 저장 성공:', data);

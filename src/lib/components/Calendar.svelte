@@ -38,24 +38,35 @@
 	// 서버에 달력 데이터 저장
 	async function saveCalendarData(dateKey, imageData) {
 		try {
+			const requestBody = {
+				dateKey,
+				imageUrl: imageData.image,
+				cloudinaryId: imageData.cloudinaryId,
+				originalName: imageData.originalName
+			};
+			
+			console.log('API 요청 본문:', requestBody);
+			
 			const response = await fetch('/api/calendar', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({
-					dateKey,
-					imageUrl: imageData.image,
-					cloudinaryId: imageData.cloudinaryId,
-					originalName: imageData.originalName
-				})
+				body: JSON.stringify(requestBody)
 			});
 
+			console.log('API 응답 상태:', response.status);
+			console.log('API 응답 헤더:', [...response.headers.entries()]);
+
 			if (!response.ok) {
-				throw new Error(`서버 저장 실패: ${response.status}`);
+				const errorData = await response.text();
+				console.error('API 오류 응답:', errorData);
+				throw new Error(`서버 저장 실패: ${response.status} - ${errorData}`);
 			}
 
-			return await response.json();
+			const result = await response.json();
+			console.log('API 성공 응답:', result);
+			return result;
 		} catch (error) {
 			console.error('달력 데이터 저장 오류:', error);
 			throw error;
