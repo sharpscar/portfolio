@@ -83,7 +83,7 @@
 				</div>
 			</div>
 
-			<div class="contact-form-container">
+			<!-- <div class="contact-form-container">
 				<form class="contact-form" on:submit={handleSubmit}>
 					<div class="form-group">
 						<label for="name">Name</label>
@@ -136,7 +136,7 @@
 						</div>
 					{/if}
 				</form>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </section>
