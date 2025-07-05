@@ -4,7 +4,7 @@
 			<div class="about-text">
 				<h2>소개</h2>
 				<p class="intro">
-					시스템 프로그래밍, 그래픽스, 성능 최적화에 전문성을 가진 
+					시스템 프로그래밍, 성능 최적화에 전문성을 가진 
 					열정적인 C++ 개발자입니다. 효율적이고 고성능의 애플리케이션을 
 					처음부터 구축하는 것을 즐깁니다.
 				</p>
@@ -29,10 +29,10 @@
 							<h4>핵심 C++</h4>
 							<ul>
 								<li>Modern C++ </li>
-								<li> Algorithms</li>
+								<li>Algorithms</li>
 								<li>Memory Management</li>
 								<li>TCP/IP</li>
-								<li>Concurrency & Threading</li>
+								<li>Threading</li>
 							</ul>
 						</div>
 						
