@@ -35,9 +35,9 @@
 			<div class="contact-info">
 				<h2>Let's Work Together</h2>
 				<p class="contact-description">
-					I'm always interested in new opportunities and collaborations. 
-					Whether you have a project in mind or just want to say hello, 
-					feel free to reach out!
+					저는 항상 새로운 기회와 협업에 관심이 있습니다.
+					어떤 프로젝트가 있든, 그냥 인사하고 싶으시든
+					언제든 편하게 연락 주세요!
 				</p>
 
 				<div class="contact-methods">
@@ -49,7 +49,7 @@
 						</div>
 						<div class="contact-details">
 							<h3>Email</h3>
-							<a href="mailto:your.email@example.com">your.email@example.com</a>
+							<a href="mailto:sharpscar@gmail.com">sharpscar@gmail.com</a>
 						</div>
 					</div>
 
@@ -61,8 +61,8 @@
 						</div>
 						<div class="contact-details">
 							<h3>LinkedIn</h3>
-							<a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">
-								/in/yourprofile
+							<a href="https://www.linkedin.com/in/%EA%B2%BD%ED%83%9C-%EB%B0%95-2717b9141/" target="_blank" rel="noopener noreferrer">
+								경태의 링크드인
 							</a>
 						</div>
 					</div>
@@ -75,8 +75,8 @@
 						</div>
 						<div class="contact-details">
 							<h3>GitHub</h3>
-							<a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer">
-								/yourusername
+							<a href="https://github.com/sharpscar" target="_blank" rel="noopener noreferrer">
+								github(sharpscar)
 							</a>
 						</div>
 					</div>

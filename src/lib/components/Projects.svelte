@@ -7,56 +7,49 @@
 			technologies: ["C", "구조체", "도트애니메이션"],
 			github: "https://github.com/sharpscar/clang/tree/main/swordman_yongbok",
 			image: "https://res.cloudinary.com/dxwuthcy0/image/upload/v1748993464/344244DC-E19B-4270-9FB8-F003AA29F1CC_an2wms.png",
-			video: "/projects/game-engine-demo.mp4",
+			video: "https://res.cloudinary.com/dxwuthcy0/video/upload/v1751681895/%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%87%E1%85%A9%E1%86%A8%E1%84%8B%E1%85%B5%E1%84%8C%E1%85%A5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%85%E1%85%A3%E1%86%BC_dbpeys.mov",
 			hasVideo: true
 		},
 		{
 			id: 2,
-			title: "이걸로 바꿨다",
-			description: "High-performance neural network library with GPU acceleration and automatic differentiation.",
-			technologies: ["C++", "CUDA", "Eigen", "CMake"],
-			github: "https://github.com/username/neural-net",
-			image: "/projects/neural-net.jpg",
-			video: "/projects/neural-training.mp4",
+			title: "지자체 행사관리 프로그램",
+			description: "지자체의 각종 행사관리를 담당부서, 공무원분들이 관리하실수 있는 프로그램",
+			technologies: ["C++", "QTFramework", "MariaDB", "json"],
+			github: "https://github.com/sharpscar/ok_corp",
+			image: "https://res.cloudinary.com/dxwuthcy0/image/upload/v1751382262/admin_manage_system.png",
+			video: "https://res.cloudinary.com/dxwuthcy0/video/upload/v1751680659/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%8F%E1%85%A2%E1%84%89%E1%85%B3%E1%84%90%E1%85%B3_2025-06-06_16-59-41_erbqnz.webm",
 			hasVideo: true
 		},
 		{
-			id: 3,
-			title: "Real-time Ray Tracer",
-			description: "Multi-threaded ray tracing renderer with support for complex lighting and materials.",
-			technologies: ["C++", "Threading", "STL", "Math"],
-			github: "https://github.com/username/raytracer",
-			image: "/projects/raytracer.jpg",
-			video: "/projects/raytracer-demo.mp4",
+			id: 3, 
+			title: "쿠쿠팡팡이츠",
+			description: "쿠팡이츠를 클론",
+			technologies: ["C++", "Threading", "json", "MariaDB"],
+			github: "https://github.com/sharpscar/4team_coupang",
+			image: "https://res.cloudinary.com/dxwuthcy0/image/upload/v1751683881/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2025-07-05_11.50.39_lotyij.png",
+			video: "https://res.cloudinary.com/dxwuthcy0/video/upload/v1751680761/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%8F%E1%85%A2%E1%84%89%E1%85%B3%E1%84%90%E1%85%B3_2025-06-19_21-16-25_hwbvii.webm",
 			hasVideo: true
 		},
 		{
 			id: 4,
-			title: "Data Structures Library",
-			description: "Optimized collection of advanced data structures with comprehensive test suite.",
-			technologies: ["C++", "Templates", "STL", "Google Test"],
-			github: "https://github.com/username/datastructures",
-			image: "/projects/datastructures.jpg",
-			hasVideo: false
+			title: "clang chat program",
+			description: "c언어를 활용한 터미널 채팅 프로그램.",
+			technologies: ["C", "tcp/ip"],
+			github: "https://github.com/sharpscar/clang/tree/main/chat",
+			image: "https://res.cloudinary.com/dxwuthcy0/image/upload/v1751684288/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2025-07-05_11.56.38_bneorb.png",
+			video: "https://res.cloudinary.com/dxwuthcy0/video/upload/v1751683236/%E1%84%8E%E1%85%A2%E1%84%90%E1%85%B5%E1%86%BC%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%80%E1%85%B3%E1%84%85%E1%85%A2%E1%86%B7%E1%84%8C%E1%85%A5%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%85%E1%85%A3%E1%86%BC_s5tm7k.mov",
+			hasVideo: true
 		},
 		{
 			id: 5,
-			title: "Memory Allocator",
-			description: "Custom memory allocator with pool allocation and memory debugging features.",
-			technologies: ["C++", "System Programming", "Memory Management"],
-			github: "https://github.com/username/allocator",
-			image: "/projects/allocator.jpg",
-			hasVideo: false
-		},
-		{
-			id: 6,
-			title: "Compiler Frontend",
-			description: "Lexer and parser for a C-like language with AST generation and semantic analysis.",
-			technologies: ["C++", "Flex", "Bison", "LLVM"],
-			github: "https://github.com/username/compiler",
-			image: "/projects/compiler.jpg",
+			title: "ai 화재 조기감시 프로그램",
+			description: "convolution neural network 합성곱 신경망 딥러닝 모델을 학습시켜 화재를 판별하고 관계기관에 화재정보를 전달하는 프로그램",
+			technologies: ["C++", "python", "pytorch","MariaDB","tcp/ip"],
+			github: "https://github.com/sharpscar/fire_detection",
+			image: "https://res.cloudinary.com/dxwuthcy0/image/upload/v1751684591/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2025-07-05_12.02.47_zzzxo7.png",
 			hasVideo: false
 		}
+		
 	];
 
 	let selectedProject = null;

@@ -14,6 +14,6 @@
 <Hero />
 <About />
 <Projects />
-<Calendar />
+<!-- <Calendar /> -->
 <Contact />
 

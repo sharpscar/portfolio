@@ -18,8 +18,8 @@
 
 				<p>
 					코딩을 하지 않을 때는 새로운 알고리즘을 탐구하거나, 
-					오픈소스 C++ 라이브러리에 기여하거나, 컴퓨터 그래픽스와 
-					게임 엔진 아키텍처를 깊이 연구하고 있습니다.
+					개발서적을 봅니다. 물론 udemy학습도 꾸준히 하고있습니다.
+
 				</p>
 
 				<div class="skills">
@@ -60,7 +60,7 @@
 			
 			<div class="about-image">
 				<div class="image-container">
-					<img src="/api/placeholder/300/400" alt="Profile" />
+					<img src="https://res.cloudinary.com/dxwuthcy0/image/upload/v1751685845/IMG_5402_p7mbi0.jpg" alt="Profile" />
 				</div>
 			</div>
 		</div>

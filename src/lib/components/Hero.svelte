@@ -1,10 +1,11 @@
 <section class="hero">
 	<div class="container">
-		<h1>scar's web world에 오신걸 환영합니다.</h1>
+		<h1>경태의 포트폴리오 페이지에 오신걸 환영합니다.</h1>
 		<p class="tagline">C++ Developer & Systems Programmer</p>
 		<p class="description">
 			c++, python언어에 강점이 있습니다. 			<br>
 			물론 웹개발 언어에도 약간의 지식이 있습니다.
+			php(laravel), javascript(node,express),python(django)
 		</p>
 		<div class="cta">
 			<a href="#projects" class="btn primary">View My Work</a>
